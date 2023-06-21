@@ -7,6 +7,15 @@ yarp_prepare_plugin(whisperSpeechTranscription
   INCLUDE whisperSpeechTranscription.h
 )
 
+#find_package(whisper)
+set(WHISPER_ROOT "" CACHE STRING "Install dir for whisper")
+if(NOT WHISPER_ROOT)
+  message(FATAL_ERROR "WHISPER_ROOT must be provided and cannot be empty.")
+endif()
+
+set(WHISPER_INCLUDE_DIRS ${WHISPER_ROOT}/include)
+set(WHISPER_LIB_DIRS ${WHISPER_ROOT}/lib/static)
+
 if(ENABLE_whisperSpeechTranscription)
   yarp_add_plugin(yarp_whisperSpeechTranscription)
 
@@ -16,11 +25,22 @@ if(ENABLE_whisperSpeechTranscription)
       whisperSpeechTranscription.h
   )
 
+ target_include_directories(yarp_whisperSpeechTranscription
+    PUBLIC
+    ${WHISPER_INCLUDE_DIRS}
+    )
+
   target_link_libraries(yarp_whisperSpeechTranscription
     PRIVATE
       YARP::YARP_os
       YARP::YARP_dev
   )
+
+  target_link_libraries(yarp_whisperSpeechTranscription
+     PRIVATE
+     ${WHISPER_LIB_DIRS}/whisper.lib
+  )
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
     YARP_dev

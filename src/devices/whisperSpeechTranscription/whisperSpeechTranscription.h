@@ -11,6 +11,8 @@
 #include <yarp/os/Bottle.h>
 #include <stdio.h>
 
+#include "whisper.h"
+
 using namespace yarp::os;
 
 /**
@@ -23,8 +25,15 @@ class WhisperSpeechTranscription :
         public yarp::dev::ISpeechTranscription
 {
 private:
-    bool m_verbose = true;
-    std::string m_language="auto";
+    bool                            m_verbose = true;
+    std::string                     m_language="auto";
+    std::string                     m_model;
+    std::vector<float>              m_pcmf32;               // mono-channel F32 PCM
+    std::vector<std::vector<float>> m_pcmf32s;              // stereo-channel F32 PCM
+    struct whisper_context*         m_ctx= nullptr;
+    whisper_full_params             m_wparams;
+
+    int32_t                         n_processors = 1;
 
 public:
     WhisperSpeechTranscription();
