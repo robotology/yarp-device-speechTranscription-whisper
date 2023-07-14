@@ -1,9 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
 <application>
    <name>transcribe demo from mic</name>
 
    <dependencies>
-   </dependencies> 
-   
+   </dependencies>
+
    <module>
       <name>yarprobotinterface</name>
       <parameters>--context whisperTranscribe_demo --config yarp_audioFromMic.xml</parameters>
@@ -23,7 +30,7 @@
       <name>yarpaudiocontrolgui</name>
       <parameters>--remote-rec /audioRecorder_nws</parameters>
    </module>
-    
+
     <connection>
       <from>/audioRecorder_nws/audio:o</from>
       <to>/speechTranscription_nws/sound:i</to>
