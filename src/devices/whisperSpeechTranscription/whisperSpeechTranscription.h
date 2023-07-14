@@ -18,8 +18,15 @@ using namespace yarp::os;
 /**
  * @ingroup dev_impl_other
  *
- * \brief `WhisperSpeechTranscription`: A fake implementation of a speech transcriber plugin.
- */
+ * \brief `WhisperSpeechTranscription`: A yarp device which performs audio-to-text transcription using OpenAI Whisper models.
+ * This device implements the ISpeechTranscription and can be used with a speechTranscription_nws_yarp device and a AudioRecorderWrapper to transcribe audio in real time.
+ * 
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | model          |      -         | string  | -              | -                | Yes          | Full path tot the model file, e.g. ggml-base.en.bin               |       |
+ * | language       |      -         | string  | -              | auto             | No           | Language (??? TBC)                                                |       |
+*/
 class WhisperSpeechTranscription :
         public yarp::dev::DeviceDriver,
         public yarp::dev::ISpeechTranscription
@@ -43,10 +50,12 @@ public:
     WhisperSpeechTranscription& operator=(const WhisperSpeechTranscription&) = delete;
     WhisperSpeechTranscription& operator=(WhisperSpeechTranscription&&) = delete;
 
+    //DeviceDriver interface
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    virtual bool setLanguage(const std::string language) override;
+    //ISpeechTranscription interface
+    virtual bool setLanguage(const std::string& language) override;
     virtual bool getLanguage(std::string& language) override;
     virtual bool transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score) override;
 };

@@ -19,62 +19,13 @@ using namespace yarp::dev;
 namespace {
 YARP_LOG_COMPONENT(WHISPER_SPEECHTR, "yarp.device.WhisperSpeechTranscription")
 }
-/*
-struct whisper_params {
-    int32_t n_threads = std::min(4, (int32_t)std::thread::hardware_concurrency());
-    int32_t max_context = -1;
-    int32_t max_len = 0;
-    int32_t best_of = 2;
-    int32_t beam_size = -1;
-
-    bool translate = false;
-    bool detect_language = false;
-    bool split_on_word = false;
-    bool no_fallback = false;
-    bool output_txt = false;
-    bool print_progress = false;
-
-    std::string language = "en";
-};
-*/
-
-/*
-bool whisper_params_parse(int argc, char** argv, whisper_params& params)
-{
-        else if (arg == "-mc" || arg == "--max-context") { params.max_context = std::stoi(argv[++i]); }
-        else if (arg == "-ml" || arg == "--max-len") { params.max_len = std::stoi(argv[++i]); }
-        else if (arg == "-bo" || arg == "--best-of") { params.best_of = std::stoi(argv[++i]); }
-        else if (arg == "-bs" || arg == "--beam-size") { params.beam_size = std::stoi(argv[++i]); }
-        else if (arg == "-tr" || arg == "--translate") { params.translate = true; }
-        else if (arg == "-sow" || arg == "--split-on-word") { params.split_on_word = true; }
-        else if (arg == "-nf" || arg == "--no-fallback") { params.no_fallback = true; }
-        else if (arg == "-pp" || arg == "--print-progress") { params.print_progress = true; }
-        else if (arg == "-l" || arg == "--language") { params.language = argv[++i]; }
-        else if (arg == "-dl" || arg == "--detect-language") { params.detect_language = true; }
-    return true;
-}
-*/
-
-/*
-void whisper_print_usage(int argc, char** argv, const whisper_params& params)
-{
-    fprintf(stderr, "  -mc N,     --max-context N     [%-7d] maximum number of text context tokens to store\n", params.max_context);
-    fprintf(stderr, "  -ml N,     --max-len N         [%-7d] maximum segment length in characters\n", params.max_len);
-    fprintf(stderr, "  -sow,      --split-on-word     [%-7s] split on word rather than on token\n", params.split_on_word ? "true" : "false");
-    fprintf(stderr, "  -bo N,     --best-of N         [%-7d] number of best candidates to keep\n", params.best_of);
-    fprintf(stderr, "  -bs N,     --beam-size N       [%-7d] beam size for beam search\n", params.beam_size);
-    fprintf(stderr, "  -nf,       --no-fallback       [%-7s] do not use temperature fallback while decoding\n", params.no_fallback ? "true" : "false");
-    fprintf(stderr, "  -pp,       --print-progress    [%-7s] print progress\n", params.print_progress ? "true" : "false");
-    fprintf(stderr, "  -l LANG,   --language LANG     [%-7s] spoken language ('auto' for auto-detect)\n", params.language.c_str());
-    fprintf(stderr, "  -dl,       --detect-language   [%-7s] exit after automatically detecting language\n", params.detect_language ? "true" : "false");
-    fprintf(stderr, "\n");
-}
-*/
 
 WhisperSpeechTranscription::WhisperSpeechTranscription()
 {
+   m_language = "en";
+   m_wparams.language=m_language.c_str();
    m_wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-   m_model = "C:\\Software\\yarp_software\\whisper_cpp_sw\\models\\ggml-base.en.bin";
+   m_model = "ggml-base.en.bin";
 }
 
 WhisperSpeechTranscription::~WhisperSpeechTranscription()
@@ -105,12 +56,42 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
     if (config.check("print_timestamps", "print_timestamps")) {
         m_wparams.logprob_thold = config.find("print_timestamps").asFloat32();}
     if (config.check("model", "file containing the model")) {
-        m_model = config.find("model").asFloat32();}
+        m_model = config.find("model").asString();}
     if (config.check("translate", "translate from source language to English")) {
         m_wparams.translate = config.find("translate").asBool();}
 //    if (config.check("diarize", "stereo audio diarization")) {
-//        m_wparams.diarize = config.find("diarize").asBool();
-//    }
+//        m_wparams.diarize = config.find("diarize").asBool();}
+    if(config.check("print_realtime", "print_realtime")) {
+        m_wparams.print_realtime = config.find("print_realtime").asBool();}
+    if(config.check("print_progress", "print_progress")) {
+        m_wparams.print_progress = config.find("print_progress").asBool();}
+    if (config.check("split_on_word", "split on word rather than on token")) {
+        m_wparams.split_on_word = config.find("split_on_word").asBool();}
+    if (config.check("best_of", "number of best candidates to keep")) {
+        m_wparams.greedy.best_of = config.find("best_of").asInt32();}
+    if (config.check("detect-language", "exit after automatically detecting language")) {
+        m_wparams.detect_language = config.find("detect-language").asBool();}
+    if (config.check("language", "spoken language ('auto' for auto-detect)")) {
+        m_wparams.language = config.find("language").asString().c_str();
+        m_language = m_wparams.language;//???
+    }
+    if (config.check("beam_size", " beam size for beam search")) {
+        m_wparams.beam_search.beam_size = config.find("beam_size").asInt32();
+        m_wparams.strategy = m_wparams.beam_search.beam_size > 1 ? WHISPER_SAMPLING_BEAM_SEARCH : WHISPER_SAMPLING_GREEDY;
+    }
+    int32_t max_context = -1;
+    int32_t max_len = 0;
+    bool no_fallback = false;
+    if (config.check("max-context", "maximum number of text context tokens to store")) {
+        max_context = config.find("max-context").asInt32();}
+    if (config.check("max-len", "maximum segment length in characters")) {
+        max_len = config.find("max-len").asInt32();}
+    if (config.check("no-fallback", "do not use temperature fallback while decoding")) {
+        no_fallback = config.find("no-fallback").asBool();}
+    m_wparams.n_max_text_ctx = max_context >= 0 ? max_context : m_wparams.n_max_text_ctx;
+    m_wparams.token_timestamps = false || max_len > 0;
+    m_wparams.max_len = false && max_len == 0 ? 60 : max_len;
+    m_wparams.temperature_inc = no_fallback ? 0.0f : m_wparams.temperature_inc;
 
     if (m_language != "auto" && whisper_lang_id(m_language.c_str()) == -1)
     {
@@ -119,8 +100,12 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
     }
 
     // whisper init
+    if (m_model=="")
+    {
+        yCError(WHISPER_SPEECHTR, "Please provide full path to the model file with parameter --model\n");
+        return false;
+    }
     m_ctx = whisper_init_from_file(m_model.c_str());
-
     if (m_ctx == nullptr)
     {
         yCError(WHISPER_SPEECHTR, "Failed to initialize whisper context\n");
@@ -148,30 +133,13 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
         {
             m_wparams.language = "auto";
         }
-        fprintf(stderr, "%s: processing (%d samples, %.1f sec), %d threads, %d processors, lang = %s, task = %s, timestamps = %d ...\n",
+        yCDebug(WHISPER_SPEECHTR, "%s: processing (%d samples, %.1f sec), %d threads, %d processors, lang = %s, task = %s, timestamps = %d ...\n",
             __func__, int(m_pcmf32.size()), float(m_pcmf32.size()) / WHISPER_SAMPLE_RATE,
             m_wparams.n_threads, n_processors,
             m_wparams.language,
             m_wparams.translate ? "translate" : "transcribe",
             m_wparams.print_timestamps);
     }
-
-   /*
-    m_wparams.strategy = params.beam_size > 1 ? WHISPER_SAMPLING_BEAM_SEARCH : WHISPER_SAMPLING_GREEDY;
-    m_wparams.print_realtime = false;
-    m_wparams.print_progress = params.print_progress;
-    m_wparams.translate = params.translate;
-    m_wparams.language = params.language.c_str();
-    m_wparams.detect_language = params.detect_language;
-    m_wparams.n_max_text_ctx = params.max_context >= 0 ? params.max_context : m_wparams.n_max_text_ctx;
-    m_wparams.token_timestamps = false || params.max_len > 0;
-    m_wparams.max_len = false && params.max_len == 0 ? 60 : params.max_len;
-    m_wparams.split_on_word = params.split_on_word;
-    m_wparams.greedy.best_of = params.best_of;
-    m_wparams.beam_search.beam_size = params.beam_size;
-    m_wparams.temperature_inc = params.no_fallback ? 0.0f : m_wparams.temperature_inc;
-*/
-
     return true;
 }
 
@@ -184,7 +152,7 @@ bool WhisperSpeechTranscription::close()
     return true;
 }
 
-bool WhisperSpeechTranscription::setLanguage(const std::string language)
+bool WhisperSpeechTranscription::setLanguage(const std::string& language)
 {
     m_language=language;
     yCInfo(WHISPER_SPEECHTR) << "Language set to" << language;
@@ -227,24 +195,6 @@ bool WhisperSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::
 
     // run the inference
     {
-/*
-        whisper_print_user_data user_data = { &params, &m_pcmf32s };
-
-        // example for abort mechanism
-        // in this example, we do not abort the processing, but we could if the flag is set to true
-        // the callback is called before every encoder run - if it returns false, the processing is aborted
-        {
-            static bool is_aborted = false; // NOTE: this should be atomic to avoid data race
-
-            wparams.encoder_begin_callback = [](struct whisper_context*, struct whisper_state*, void* user_data)
-            {
-                bool is_aborted = *(bool*)user_data;
-                return !is_aborted;
-            };
-            wparams.encoder_begin_callback_user_data = &is_aborted;
-        }
-*/
-
         if (whisper_full_parallel(m_ctx, m_wparams, m_pcmf32.data(), m_pcmf32.size(), n_processors) != 0)
         {
             yCError(WHISPER_SPEECHTR, "failed to process audio");

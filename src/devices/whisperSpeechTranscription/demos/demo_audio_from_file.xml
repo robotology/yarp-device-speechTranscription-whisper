@@ -1,0 +1,38 @@
+<application>
+   <name>transcribe demo from file</name>
+
+   <dependencies>
+   </dependencies> 
+   
+   <module>
+      <name>yarprobotinterface</name>
+      <parameters>--context whisperTranscribe_demo --config yarp_audioFromFile.xml --input_audio_file audio_in.wav</parameters>
+      <node>node</node>
+   </module>
+   <module>
+      <name>yarprobotinterface</name>
+      <parameters>--context whisperTranscribe_demo --config yarp_transcribe.xml --model "C:\\Software\\yarp_software\\whisper_cpp_sw\\models\\ggml-base.en.bin" </parameters>
+      <node>node</node>
+   </module>
+   <module>
+      <name>yarprobotinterface</name>
+      <parameters>--context whisperTranscribe_demo --config yarp_playAudio.xml</parameters>
+      <node>node</node>
+   </module>
+   <module>
+      <name>yarpaudiocontrolgui</name>
+      <parameters>--remote-rec /audioRecorder_nws</parameters>
+   </module>
+    
+    <connection>
+      <from>/audioRecorder_nws/audio:o</from>
+      <to>/speechTranscription_nws/sound:i</to>
+      <protocol>fast_tcp</protocol>
+    </connection>
+    <connection>
+      <from>/audioRecorder_nws/audio:o</from>
+      <to>/audioPlayerWrapper/audio:i</to>
+      <protocol>fast_tcp</protocol>
+    </connection>
+
+</application>

@@ -1,20 +1,22 @@
 # SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+set(WHISPER_ROOT "" CACHE STRING "Install dir for whisper")
+if(NOT WHISPER_ROOT)
+  message(WARNING "WHISPER_ROOT must be provided and cannot be empty.")
+else()
+  set(WHISPER_INCLUDE_DIRS ${WHISPER_ROOT}/include)
+  set(WHISPER_LIB_DIRS ${WHISPER_ROOT}/lib/static)
+  set(YARP_HAS_Whisper true)
+endif()
+
 yarp_prepare_plugin(whisperSpeechTranscription
   CATEGORY device
   TYPE WhisperSpeechTranscription
   INCLUDE whisperSpeechTranscription.h
+  DEPENDS "YARP_HAS_Whisper"
+  DEFAULT ON
 )
-
-#find_package(whisper)
-set(WHISPER_ROOT "" CACHE STRING "Install dir for whisper")
-if(NOT WHISPER_ROOT)
-  message(FATAL_ERROR "WHISPER_ROOT must be provided and cannot be empty.")
-endif()
-
-set(WHISPER_INCLUDE_DIRS ${WHISPER_ROOT}/include)
-set(WHISPER_LIB_DIRS ${WHISPER_ROOT}/lib/static)
 
 if(ENABLE_whisperSpeechTranscription)
   yarp_add_plugin(yarp_whisperSpeechTranscription)
@@ -61,6 +63,7 @@ if(ENABLE_whisperSpeechTranscription)
 
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
+    add_subdirectory(demos)
   endif()
 
 endif()

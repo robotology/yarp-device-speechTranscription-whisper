@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 cmake_minimum_required(VERSION 3.16)
-project(yarp-device-speechTranscription-whisper
+project(WhisperTranscribe
         LANGUAGES CXX
         VERSION 3.8.0)
 
