@@ -76,10 +76,10 @@ jobs:
         # Compilation related dependencies
         mamba install cmake compilers make ninja pkg-config
         # Actual dependencies
-        mamba install -c conda-forge -c robostack-staging ycm-cmake-modules eigen ace
+        mamba install -c conda-forge -c robostack-staging ycm-cmake-modules eigen ace sqlite
 
 
-    - name: Download YARP [Linux&macOS]
+    - name: Download YARP [Linux,Windows,macOS]
       if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu') || contains(matrix.os, 'windows')
       run: |
         cd ${GITHUB_WORKSPACE}
@@ -112,7 +112,7 @@ jobs:
 
     - name: Dependencies from source [Windows]
       if: contains(matrix.os, 'windows')
-      shell: bash -l {0}
+      shell: cmd /C CALL {0}
       run: |
         cd ${GITHUB_WORKSPACE}
         cd yarp
@@ -131,7 +131,7 @@ jobs:
         cd whispercpp
         mkdir build
         cd build
-        cmake -G"Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}/whispercpp_InstallDir
+        cmake -G"Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}/whispercpp_InstallDir ..
         cmake --build .
         cmake --install .
 
@@ -139,9 +139,10 @@ jobs:
       if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
       shell: bash -l {0}
       run: |
-        mkdir -p build
+        cd ${GITHUB_WORKSPACE}
+        mkdir build
         cd build
-        cmake -GNinja -DWHISPER_ROOT=${CONDA_PREFIX}/whispercpp_InstallDir
+        cmake -GNinja -DWHISPER_ROOT=${CONDA_PREFIX}/whispercpp_InstallDir \
                       -DBUILD_TESTING:BOOL=ON \
                       -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
                       -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
@@ -152,9 +153,10 @@ jobs:
       if: contains(matrix.os, 'windows')
       shell: cmd /C CALL {0}
       run: |
-        mkdir -p build
+        cd ${GITHUB_WORKSPACE}
+        mkdir build
         cd build
-        cmake -G"Visual Studio 16 2019" -DWHISPER_ROOT=${CONDA_PREFIX}/whispercpp_InstallDir
+        cmake -G"Visual Studio 16 2019" -DWHISPER_ROOT=${CONDA_PREFIX}/whispercpp_InstallDir ^
                                         -DBUILD_TESTING:BOOL=ON ^
                                         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ^
                                         -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}\Library .. ^
@@ -164,6 +166,7 @@ jobs:
       if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
       shell: bash -l {0}
       run: |
+        cd ${GITHUB_WORKSPACE}
         cd build
         cmake --build . --config ${{ matrix.build_type }}
 
@@ -171,6 +174,7 @@ jobs:
       if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
       shell: bash -l {0}
       run: |
+        cd ${GITHUB_WORKSPACE}
         cd build
         cmake --install . --config ${{ matrix.build_type }}
 

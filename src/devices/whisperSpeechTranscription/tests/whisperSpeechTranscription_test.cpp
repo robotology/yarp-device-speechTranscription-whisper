@@ -5,8 +5,12 @@
 
 #include <yarp/dev/ISpeechTranscription.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
+
+#include <yarp/sig/Sound.h>
+#include <yarp/sig/SoundFile.h>
 
 #include <catch2/catch_amalgamated.hpp>
 #include <harness.h>
@@ -24,6 +28,14 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
     {
         yarp::dev::ISpeechTranscription* istr=nullptr;
         PolyDriver ddfake;
+
+        //read a test sound file from disk
+        yarp::sig::Sound snd;
+        yarp::os::ResourceFinder rf;
+        rf.setDefaultContext("whisperTranscribe_demo");
+        std::string ss = rf.findFile("audio_in.wav");
+        yarp::sig::file::read(snd,ss.c_str());
+        CHECK(snd.getSamples()>0);
 
         //open the device
         {
@@ -43,8 +55,6 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
 
         std::string transcript;
         double score;
-        yarp::sig::Sound snd;
-        snd.resize(100, 2);
         CHECK(istr->transcribe(snd,transcript, score));
         CHECK(transcript=="hello world");
         CHECK(score > 0.99);
