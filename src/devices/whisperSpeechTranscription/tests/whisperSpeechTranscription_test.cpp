@@ -27,7 +27,6 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
 
         //open the device
         {
-
             Property pdev_cfg;
             pdev_cfg.put("device", "whisperSpeechTranscription");
             REQUIRE(ddfake.open(pdev_cfg));

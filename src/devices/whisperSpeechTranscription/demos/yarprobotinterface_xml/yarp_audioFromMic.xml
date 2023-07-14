@@ -16,12 +16,12 @@
             <param name="channels"> 1  </param>
         </group>
         </device>
-        
+
         <device name="dev2" type="audioRecorder_nws_yarp">
             <param name="start"> 1 </param>
             <param name="min_samples_over_network"> 160000 </param>
             <param name="max_samples_over_network"> 160000 </param>
-            
+
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
                     <elem name="subdevice"> dev1 </elem>
@@ -29,6 +29,6 @@
             </action>
             <action phase="shutdown" level="5" type="detach" />
         </device>
-        
+
     </devices>
 </robot>

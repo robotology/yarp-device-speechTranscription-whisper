@@ -20,7 +20,7 @@ using namespace yarp::os;
  *
  * \brief `WhisperSpeechTranscription`: A yarp device which performs audio-to-text transcription using OpenAI Whisper models.
  * This device implements the ISpeechTranscription and can be used with a speechTranscription_nws_yarp device and a AudioRecorderWrapper to transcribe audio in real time.
- * 
+ *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|

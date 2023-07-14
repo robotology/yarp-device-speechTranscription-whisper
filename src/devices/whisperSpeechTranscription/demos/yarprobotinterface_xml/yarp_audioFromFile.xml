@@ -13,7 +13,7 @@
             <param extern-name="input_audio_file" name="file_name"> default.wav </param>
             <param name="reset_on_stop"> true </param>
         </device>
-        
+
         <device name="dev2" type="audioRecorder_nws_yarp">
             <param name="start"> 1 </param>
 
@@ -24,6 +24,6 @@
             </action>
             <action phase="shutdown" level="5" type="detach" />
         </device>
-        
+
     </devices>
 </robot>
