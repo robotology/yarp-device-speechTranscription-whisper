@@ -106,7 +106,8 @@ jobs:
         cd whispercpp
         mkdir build
         cd build
-        cmake -GNinja -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}/whispercpp_InstallDir ..
+        cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF \
+                      -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}/whispercpp_InstallDir ..
         cmake --build .
         cmake --install .
 
@@ -131,7 +132,8 @@ jobs:
         cd whispercpp
         mkdir build
         cd build
-        cmake -G"Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}/whispercpp_InstallDir ..
+        cmake -G"Visual Studio 16 2019" -DBUILD_SHARED_LIBS:BOOL=OFF \
+                                        -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}/whispercpp_InstallDir ..
         cmake --build .
         cmake --install .
 

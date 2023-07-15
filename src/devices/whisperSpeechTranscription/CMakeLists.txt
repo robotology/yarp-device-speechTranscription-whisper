@@ -38,10 +38,15 @@ if(ENABLE_whisperSpeechTranscription)
       YARP::YARP_dev
   )
 
+if(WIN32)
   target_link_libraries(yarp_whisperSpeechTranscription
      PRIVATE
-     ${WHISPER_LIB_DIRS}/whisper
-  )
+     ${WHISPER_LIB_DIRS}/libwhisper.lib)
+else()
+  target_link_libraries(yarp_whisperSpeechTranscription
+     PRIVATE
+     ${WHISPER_LIB_DIRS}/libwhisper.a)
+endif()
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
