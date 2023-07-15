@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
+#include <thread>
 
 using namespace yarp::os;
 using namespace yarp::dev;
