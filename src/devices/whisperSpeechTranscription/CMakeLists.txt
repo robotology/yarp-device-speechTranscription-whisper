@@ -40,7 +40,7 @@ if(ENABLE_whisperSpeechTranscription)
 
   target_link_libraries(yarp_whisperSpeechTranscription
      PRIVATE
-     ${WHISPER_LIB_DIRS}/whisper.lib
+     ${WHISPER_LIB_DIRS}/whisper
   )
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
