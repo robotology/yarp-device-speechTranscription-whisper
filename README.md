@@ -34,7 +34,7 @@ Installation
  cd whispercpp
  mkdir build
  cd build
- cmake -GNinja -DCMAKE_INSTALL_PREFIX=/my_whispercpp_installation_dir
+ cmake -GNinja -DCMAKE_INSTALL_PREFIX=/my_whispercpp_installation_dir ..
  cmake --build .
  cmake --install .
 ~~~
@@ -45,7 +45,7 @@ Installation
  cd yarp-device-speechTranscription-whisper
  mkdir build
  cd build
- cmake -GNinja -DWHISPER_ROOT=/my_whispercpp_installation_dir
+ cmake -GNinja -DWHISPER_ROOT=/my_whispercpp_installation_dir ..
  cmake --build .
 ~~~
 
