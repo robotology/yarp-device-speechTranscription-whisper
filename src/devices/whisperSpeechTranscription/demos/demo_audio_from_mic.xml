@@ -18,7 +18,7 @@
    </module>
    <module>
       <name>yarprobotinterface</name>
-      <parameters>--context whisperTranscribe_demo --config yarp_transcribe.xml --model "C:\\Software\\yarp_software\\whisper_cpp_sw\\models\\ggml-base.en.bin"</parameters>
+      <parameters>--context whisperTranscribe_demo --config yarp_transcribe.xml --model ggml-base.en.bin</parameters>
       <node>node</node>
    </module>
    <module>

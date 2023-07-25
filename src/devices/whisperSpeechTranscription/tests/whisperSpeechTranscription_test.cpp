@@ -37,10 +37,14 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
         yarp::sig::file::read(snd,ss.c_str());
         CHECK(snd.getSamples()>0);
 
+        //find the model
+        std::string ss2 = rf.findFile("ggml-base.en.bin");
+        
         //open the device
         {
             Property pdev_cfg;
             pdev_cfg.put("device", "whisperSpeechTranscription");
+            pdev_cfg.put("model", ss2.c_str());
             REQUIRE(ddfake.open(pdev_cfg));
             REQUIRE(ddfake.view(istr));
         }
