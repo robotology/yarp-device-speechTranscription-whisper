@@ -29,7 +29,9 @@ Installation
 # Clone whisper.cpp repository, choose an install dir, make it and install it to the chosen install dir.
 # Please note that whisper.cpp has several build options. Some of them e.g. the use of the GPU may affect
 # performances significantly. The commands reported below refers only to default configuration.
-# Please check the documention on the official page github page.
+# Please check the documentation on the official page github page.
+# ${ROBOT_CODE} is the root directory of your choice.
+ cd ${ROBOT_CODE}
  git clone https://github.com/ggerganov/whisper.cpp whispercpp
  cd whispercpp
  mkdir build
@@ -41,12 +43,19 @@ Installation
 
 ### Step 2: Build the yarp device
 ~~~bash
+ cd ${ROBOT_CODE}
  git clone https://github.com/robotology/yarp-device-speechTranscription-whisper
  cd yarp-device-speechTranscription-whisper
  mkdir build
  cd build
  cmake -GNinja -DWHISPER_ROOT=/my_whispercpp_installation_dir ..
  cmake --build .
+~~~
+
+### Step 3: Install the model(s)
+~~~bash
+# Here is a list (not complete) of possible whisper models: tiny.en, tiny, base.en, base, small.en, small, medium.en, medium, large-v1, large
+  wget -P ${ROBOT_CODE}/yarp-device-speechTranscription-whisper/build/share/WhisperTranscribe/contexts/whisperTranscribe_demo/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
 ~~~
 
 Usage
