@@ -41,7 +41,7 @@ if(ENABLE_whisperSpeechTranscription)
 if(WIN32)
   target_link_libraries(yarp_whisperSpeechTranscription
      PRIVATE
-     ${WHISPER_LIB_DIRS}/libwhisper.lib)
+     ${WHISPER_LIB_DIRS}/whisper.lib)
 else()
   target_link_libraries(yarp_whisperSpeechTranscription
      PRIVATE

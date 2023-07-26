@@ -39,7 +39,7 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
 
         //find the model
         std::string ss2 = rf.findFile("ggml-base.en.bin");
-        
+
         //open the device
         {
             Property pdev_cfg;
