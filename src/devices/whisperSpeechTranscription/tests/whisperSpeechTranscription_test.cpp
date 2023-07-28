@@ -5,6 +5,7 @@
 
 #include <yarp/dev/ISpeechTranscription.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/WrapperSingle.h>
@@ -32,13 +33,19 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
         //read a test sound file from disk
         yarp::sig::Sound snd;
         yarp::os::ResourceFinder rf;
+
+        rf.setQuiet(false);
+        rf.setVerbose(true);
+
         rf.setDefaultContext("whisperTranscribe_demo");
         std::string ss = rf.findFile("audio_in.wav");
+        CHECK(!ss.empty());
         yarp::sig::file::read(snd,ss.c_str());
         CHECK(snd.getSamples()>0);
 
         //find the model
         std::string ss2 = rf.findFile("ggml-base.en.bin");
+        CHECK(!ss2.empty());
 
         //open the device
         {

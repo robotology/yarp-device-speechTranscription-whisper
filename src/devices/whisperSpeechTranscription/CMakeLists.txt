@@ -48,6 +48,10 @@ else()
      ${WHISPER_LIB_DIRS}/libwhisper.a)
 endif()
 
+if (APPLE)
+    target_link_libraries(yarp_whisperSpeechTranscription PRIVATE "-framework Accelerate")
+endif()
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
     YARP_dev
