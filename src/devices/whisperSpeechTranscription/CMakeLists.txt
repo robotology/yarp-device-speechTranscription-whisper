@@ -70,9 +70,10 @@ endif()
 
   set_property(TARGET yarp_whisperSpeechTranscription PROPERTY FOLDER "Plugins/Device")
 
+  add_subdirectory(demos)
+
   if(YARP_COMPILE_TESTS)
     add_subdirectory(tests)
-    add_subdirectory(demos)
   endif()
 
 endif()
