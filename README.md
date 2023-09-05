@@ -31,12 +31,14 @@ Installation
 # performances significantly. The commands reported below refers only to default configuration.
 # Please check the documentation on the official page github page.
 # ${ROBOT_CODE} is the root directory of your choice.
+# ~/my_whispercpp_installation_dir is a directory of your choice (where the whispercpp library will be installed)
+
  cd ${ROBOT_CODE}
  git clone https://github.com/ggerganov/whisper.cpp whispercpp
  cd whispercpp
  mkdir build
  cd build
- cmake -GNinja -DCMAKE_INSTALL_PREFIX=/my_whispercpp_installation_dir ..
+ cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX=~/my_whispercpp_installation_dir ..
  cmake --build .
  cmake --install .
 ~~~
@@ -48,7 +50,7 @@ Installation
  cd yarp-device-speechTranscription-whisper
  mkdir build
  cd build
- cmake -GNinja -DWHISPER_ROOT=/my_whispercpp_installation_dir ..
+ cmake -GNinja -DWHISPER_ROOT=~/my_whispercpp_installation_dir ..
  cmake --build .
 ~~~
 
