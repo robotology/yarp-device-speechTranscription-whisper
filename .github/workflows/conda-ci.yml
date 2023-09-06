@@ -204,7 +204,7 @@ jobs:
         cd build
         cmake --install . --config ${{ matrix.build_type }}
         #install the models
-        wget -P ${GITHUB_WORKSPACE}/build/share/WhisperTranscribe/contexts/whisperTranscribe_demo/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+        wget -P ${GITHUB_WORKSPACE}/build/share/yarp/contexts/whisperTranscribe_demo https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
 
     - name: Test [Linux&macOS]
       if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
@@ -228,8 +228,10 @@ jobs:
         cmake --install . --config ${{ matrix.build_type }}
         #install the models
         curl  -L -o ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
-        mkdir -p ${GITHUB_WORKSPACE}/build/share/WhisperTranscribe/contexts/whisperTranscribe_demo
-        mv ggml-base.en.bin ${GITHUB_WORKSPACE}/build/share/WhisperTranscribe/contexts/whisperTranscribe_demo
+        #-p to create all the parent dirs
+        #mkdir -p ${GITHUB_WORKSPACE}/build/share/WhisperTranscribe/contexts/whisperTranscribe_demo
+        #mkdir -p ${GITHUB_WORKSPACE}/build/share/yarp/contexts/whisperTranscribe_demo
+        mv ggml-base.en.bin ${GITHUB_WORKSPACE}/build/share/yarp/contexts/whisperTranscribe_demo
 
     - name: Test [Windows]
       if: contains(matrix.os, 'windows')
