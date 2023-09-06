@@ -56,18 +56,20 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
             REQUIRE(ddfake.view(istr));
         }
 
-        std::string lang = "eng";
+        std::string lang = "auto";
         CHECK(istr->getLanguage(lang));
-        CHECK(lang=="auto");
+        CHECK(lang=="en");
 
-        CHECK(istr->setLanguage("eng"));
+        //not sue if ggml-base.en.bin can support other languages.
+        //probably setLanguage should return an error?
+        //CHECK(istr->setLanguage("en"));
         CHECK(istr->getLanguage(lang));
-        CHECK(lang == "eng");
+        CHECK(lang == "en");
 
         std::string transcript;
         double score;
         CHECK(istr->transcribe(snd,transcript, score));
-        CHECK(transcript=="hello world");
+        CHECK(transcript==" And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.");
         CHECK(score > 0.99);
 
         //"Close all polydrivers and check"

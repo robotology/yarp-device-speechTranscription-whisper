@@ -149,6 +149,7 @@ bool WhisperSpeechTranscription::close()
     if (m_ctx)
     {
         whisper_free(m_ctx);
+        m_ctx=nullptr;
     }
     return true;
 }
