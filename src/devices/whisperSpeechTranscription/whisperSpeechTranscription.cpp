@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <thread>
+#include <regex>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -89,6 +90,8 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
         max_len = config.find("max-len").asInt32();}
     if (config.check("no-fallback", "do not use temperature fallback while decoding")) {
         no_fallback = config.find("no-fallback").asBool();}
+    if (config.check("remove_symbols","remove [] symbols from the text transcript")) {
+        m_no_symbols = config.find("remove_symbols").asBool();}
     m_wparams.n_max_text_ctx = max_context >= 0 ? max_context : m_wparams.n_max_text_ctx;
     m_wparams.token_timestamps = false || max_len > 0;
     m_wparams.max_len = false && max_len == 0 ? 60 : max_len;
@@ -213,6 +216,17 @@ bool WhisperSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::
             yCDebug(WHISPER_SPEECHTR, text);
         }
     }
+
+    //remove symbols such as [bla bla]
+    if (m_no_symbols)
+    {
+        std::regex pattern1("\\[[^\\]]*\\]");
+        std::string input = transcription;
+        transcription = std::regex_replace(input, pattern1, "");
+    }
+
+    //assign the score
     score = 1.0;
+    if (transcription.empty()) {score = 0.0;}
     return true;
 }

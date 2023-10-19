@@ -26,6 +26,7 @@ using namespace yarp::os;
  * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | model          |      -         | string  | -              | -                | Yes          | Full path tot the model file, e.g. ggml-base.en.bin               |       |
  * | language       |      -         | string  | -              | auto             | No           | Language (??? TBC)                                                |       |
+ * | remove_symbols |      -         | bool    | -              | true             | No           | Removed symbols from output text, i.e. ...[bla bla]...            |       |
 */
 class WhisperSpeechTranscription :
         public yarp::dev::DeviceDriver,
@@ -33,6 +34,7 @@ class WhisperSpeechTranscription :
 {
 private:
     bool                            m_verbose = true;
+    bool                            m_no_symbols = true;
     std::string                     m_language="auto";
     std::string                     m_model;
     std::vector<float>              m_pcmf32;               // mono-channel F32 PCM
