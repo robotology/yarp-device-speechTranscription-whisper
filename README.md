@@ -34,11 +34,11 @@ Installation
 # ~/my_whispercpp_installation_dir is a directory of your choice (where the whispercpp library will be installed)
 
  cd ${ROBOT_CODE}
- git clone https://github.com/ggerganov/whisper.cpp whispercpp
+ git clone https://github.com/ggerganov/whisper.cpp -b v1.6.2 whispercpp 
  cd whispercpp
  mkdir build
  cd build
- cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX=~/my_whispercpp_installation_dir ..
+ cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=~/my_whispercpp_installation_dir ..
  cmake --build .
  cmake --install .
 ~~~
