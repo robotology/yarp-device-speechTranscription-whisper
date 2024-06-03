@@ -12,7 +12,7 @@
         <device name="dev1" type="portaudioPlayer">
         </device>
 
-        <device name="dev2" type="AudioPlayerWrapper ">
+        <device name="dev2" type="AudioPlayerWrapper">
             <param name="start"> 1 </param>
 
             <action phase="startup" level="5" type="attach">
