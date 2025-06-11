@@ -20,6 +20,12 @@ Documentation of the interface API is provided in the official Yarp documentatio
 Documentation of the audio in Yarp.
 https://yarp.it/latest/group__AudioDoc.html
 
+Dependencies
+------------
+
+* yarp >= 3.12 (https://github.com/robotology/yarp)
+* whisper.cpp >= 1.7.5 (https://github.com/ggml-org/whisper.cpp)
+
 Installation
 -------------
 
@@ -34,7 +40,7 @@ Installation
 # ~/my_whispercpp_installation_dir is a directory of your choice (where the whispercpp library will be installed)
 
  cd ${ROBOT_CODE}
- git clone https://github.com/ggerganov/whisper.cpp -b v1.6.2 whispercpp 
+ git clone https://github.com/ggml-org/whisper.cpp -b v1.7.5 whispercpp 
  cd whispercpp
  mkdir build
  cd build
