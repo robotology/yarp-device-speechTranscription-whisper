@@ -6,7 +6,7 @@ if(NOT WHISPER_ROOT)
   message(WARNING "WHISPER_ROOT must be provided and cannot be empty.")
 else()
   set(WHISPER_INCLUDE_DIRS ${WHISPER_ROOT}/include)
-  set(WHISPER_LIB_DIRS ${WHISPER_ROOT}/lib/static)
+  set(WHISPER_LIB_DIRS ${WHISPER_ROOT}/lib)
   set(YARP_HAS_Whisper true)
 endif()
 
