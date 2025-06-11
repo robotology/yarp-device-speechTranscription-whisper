@@ -47,8 +47,8 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
         m_wparams.duration_ms = config.find("duration").asInt32();}
     if (config.check("offset_ms")) {
         m_wparams.offset_ms = config.find("offset_ms").asInt32();}
-    if (config.check("speed_up")) {
-        m_wparams.speed_up = config.find("speed_up").asBool();}
+   // if (config.check("speed_up")) {
+   //     m_wparams.speed_up = config.find("speed_up").asBool();}
     if (config.check("thold_pt","word timestamp probability threshold")) {
         m_wparams.thold_pt = config.find("thold_pt").asFloat32();}
     if (config.check("entropy_thold","entropy threshold for decoder fail")) {
@@ -157,20 +157,20 @@ bool WhisperSpeechTranscription::close()
     return true;
 }
 
-bool WhisperSpeechTranscription::setLanguage(const std::string& language)
+ReturnValue WhisperSpeechTranscription::setLanguage(const std::string& language)
 {
     m_language=language;
     yCInfo(WHISPER_SPEECHTR) << "Language set to" << language;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool WhisperSpeechTranscription::getLanguage(std::string& language)
+ReturnValue WhisperSpeechTranscription::getLanguage(std::string& language)
 {
     language = m_language;
-    return true;
+    return ReturnValue_ok;
 }
 
-bool WhisperSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
+ReturnValue WhisperSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::string& transcription, double& score)
 {
     yCDebug(WHISPER_SPEECHTR)<< "received audio" << sound.getSamples();
 
@@ -181,7 +181,7 @@ bool WhisperSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::
         sound.getChannels() == 0)
     {
         yCError(WHISPER_SPEECHTR) << "Invalid Sound sample received";
-        return false;
+        return ReturnValue::return_code::return_value_error_method_failed;
     }
 
     //copy the audio data;
@@ -203,7 +203,7 @@ bool WhisperSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::
         if (whisper_full_parallel(m_ctx, m_wparams, m_pcmf32.data(), m_pcmf32.size(), n_processors) != 0)
         {
             yCError(WHISPER_SPEECHTR, "failed to process audio");
-            return false;
+            return ReturnValue::return_code::return_value_error_method_failed;
         }
     }
 
@@ -228,5 +228,5 @@ bool WhisperSpeechTranscription::transcribe(const yarp::sig::Sound& sound, std::
     //assign the score
     score = 1.0;
     if (transcription.empty()) {score = 0.0;}
-    return true;
+    return ReturnValue_ok;
 }
