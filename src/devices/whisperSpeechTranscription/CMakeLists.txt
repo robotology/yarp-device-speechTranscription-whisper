@@ -1,14 +1,14 @@
 # SPDX-FileCopyrightText: 2023-2023 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-set(WHISPER_ROOT "" CACHE STRING "Install dir for whisper")
-if(NOT WHISPER_ROOT)
-  message(WARNING "WHISPER_ROOT must be provided and cannot be empty.")
-else()
-  set(WHISPER_INCLUDE_DIRS ${WHISPER_ROOT}/include)
-  set(WHISPER_LIB_DIRS ${WHISPER_ROOT}/lib)
-  set(YARP_HAS_Whisper true)
-endif()
+# set(WHISPER_ROOT "" CACHE STRING "Install dir for whisper")
+# if(NOT WHISPER_ROOT)
+#   message(WARNING "WHISPER_ROOT must be provided and cannot be empty.")
+# else()
+#   set(WHISPER_INCLUDE_DIRS ${WHISPER_ROOT}/include)
+#   set(WHISPER_LIB_DIRS ${WHISPER_ROOT}/lib)
+#   set(YARP_HAS_Whisper true)
+# endif()
 
 yarp_prepare_plugin(whisperSpeechTranscription
   CATEGORY device
@@ -20,33 +20,37 @@ yarp_prepare_plugin(whisperSpeechTranscription
 
 if(ENABLE_whisperSpeechTranscription)
   yarp_add_plugin(yarp_whisperSpeechTranscription)
+  generateDeviceParamsParser(WhisperSpeechTranscription yarp_whisperSpeechTranscription)
 
   target_sources(yarp_whisperSpeechTranscription
     PRIVATE
       whisperSpeechTranscription.cpp
       whisperSpeechTranscription.h
+      WhisperSpeechTranscription_ParamsParser.h
+      WhisperSpeechTranscription_ParamsParser.cpp
   )
 
- target_include_directories(yarp_whisperSpeechTranscription
-    PUBLIC
-    ${WHISPER_INCLUDE_DIRS}
-    )
+#  target_include_directories(yarp_whisperSpeechTranscription
+#     PUBLIC
+#     ${WHISPER_INCLUDE_DIRS}
+#     )
 
   target_link_libraries(yarp_whisperSpeechTranscription
     PRIVATE
       YARP::YARP_os
       YARP::YARP_dev
+      whisper
   )
 
-if(WIN32)
-  target_link_libraries(yarp_whisperSpeechTranscription
-     PRIVATE
-     ${WHISPER_LIB_DIRS}/whisper.lib)
-else()
-  target_link_libraries(yarp_whisperSpeechTranscription
-     PRIVATE
-     ${WHISPER_LIB_DIRS}/libwhisper.a)
-endif()
+# if(WIN32)
+#   target_link_libraries(yarp_whisperSpeechTranscription
+#      PRIVATE
+#      ${WHISPER_LIB_DIRS}/whisper.lib)
+# else()
+#   target_link_libraries(yarp_whisperSpeechTranscription
+#      PRIVATE
+#      ${WHISPER_LIB_DIRS}/libwhisper.a)
+# endif()
 
 if (APPLE)
     target_link_libraries(yarp_whisperSpeechTranscription PRIVATE "-framework Accelerate")

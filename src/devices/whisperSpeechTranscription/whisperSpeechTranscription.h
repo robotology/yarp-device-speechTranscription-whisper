@@ -9,9 +9,11 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ISpeechTranscription.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ResourceFinder.h>
 #include <stdio.h>
 
 #include "whisper.h"
+#include "WhisperSpeechTranscription_ParamsParser.h"
 
 using namespace yarp::os;
 
@@ -21,16 +23,12 @@ using namespace yarp::os;
  * \brief `WhisperSpeechTranscription`: A yarp device which performs audio-to-text transcription using OpenAI Whisper models.
  * This device implements the ISpeechTranscription and can be used with a speechTranscription_nws_yarp device and a AudioRecorderWrapper to transcribe audio in real time.
  *
- *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | model          |      -         | string  | -              | -                | Yes          | Full path tot the model file, e.g. ggml-base.en.bin               |       |
- * | language       |      -         | string  | -              | auto             | No           | Language (??? TBC)                                                |       |
- * | remove_symbols |      -         | bool    | -              | true             | No           | Removed symbols from output text, i.e. ...[bla bla]...            |       |
+ *  Parameters required by this device are described in the class WhisperSpeechTranscription_ParamsParser
 */
 class WhisperSpeechTranscription :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::ISpeechTranscription
+        public yarp::dev::ISpeechTranscription,
+        public WhisperSpeechTranscription_ParamsParser
 {
 private:
     bool                            m_verbose = true;

@@ -27,7 +27,6 @@ WhisperSpeechTranscription::WhisperSpeechTranscription()
    m_language = "en";
    m_wparams.language=m_language.c_str();
    m_wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-   m_model = "ggml-base.en.bin";
 }
 
 WhisperSpeechTranscription::~WhisperSpeechTranscription()
@@ -37,6 +36,11 @@ WhisperSpeechTranscription::~WhisperSpeechTranscription()
 
 bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
 {
+    if(!parseParams(config))
+    {
+        yCError(WHISPER_SPEECHTR) << "Could not parse the parameters correctly";
+        return false;
+    }
     if (config.check("threads","number of threads")){
         m_wparams.n_threads = config.find("threads").asInt16();}
     if (config.check("processors", "number of processors")){
@@ -73,10 +77,6 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
         m_wparams.greedy.best_of = config.find("best_of").asInt32();}
     if (config.check("detect-language", "exit after automatically detecting language")) {
         m_wparams.detect_language = config.find("detect-language").asBool();}
-    if (config.check("language", "spoken language ('auto' for auto-detect)")) {
-        m_wparams.language = config.find("language").asString().c_str();
-        m_language = m_wparams.language;//???
-    }
     if (config.check("beam_size", " beam size for beam search")) {
         m_wparams.beam_search.beam_size = config.find("beam_size").asInt32();
         m_wparams.strategy = m_wparams.beam_search.beam_size > 1 ? WHISPER_SAMPLING_BEAM_SEARCH : WHISPER_SAMPLING_GREEDY;
@@ -90,8 +90,7 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
         max_len = config.find("max-len").asInt32();}
     if (config.check("no-fallback", "do not use temperature fallback while decoding")) {
         no_fallback = config.find("no-fallback").asBool();}
-    if (config.check("remove_symbols","remove [] symbols from the text transcript")) {
-        m_no_symbols = config.find("remove_symbols").asBool();}
+    m_no_symbols = m_remove_symbols==1;
     m_wparams.n_max_text_ctx = max_context >= 0 ? max_context : m_wparams.n_max_text_ctx;
     m_wparams.token_timestamps = false || max_len > 0;
     m_wparams.max_len = false && max_len == 0 ? 60 : max_len;
@@ -102,14 +101,22 @@ bool WhisperSpeechTranscription::open(yarp::os::Searchable& config)
         yCError(WHISPER_SPEECHTR, "error: unknown language '%s'\n", m_language.c_str());
         return false;
     }
+    m_wparams.language = config.find("language").asString().c_str();
 
     // whisper init
-    if (m_model=="")
+    std::string model_path;
+    bool has_model_context{m_model_context != ""};
+    yarp::os::ResourceFinder resource_finder;
+    if(has_model_context)
     {
-        yCError(WHISPER_SPEECHTR, "Please provide full path to the model file with parameter --model\n");
-        return false;
+        resource_finder.setDefaultContext(m_model_context);
+        model_path = resource_finder.findFileByName(m_model_name);
     }
-    m_ctx = whisper_init_from_file(m_model.c_str());
+    else
+    {
+        model_path = m_model_name;
+    }
+    m_ctx = whisper_init_from_file(model_path.c_str());
     if (m_ctx == nullptr)
     {
         yCError(WHISPER_SPEECHTR, "Failed to initialize whisper context\n");

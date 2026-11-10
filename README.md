@@ -24,7 +24,7 @@ Dependencies
 ------------
 
 * yarp >= 3.12 (https://github.com/robotology/yarp)
-* whisper.cpp >= 1.7.5 (https://github.com/ggml-org/whisper.cpp)
+* whisper.cpp >= 1.8.4 (https://github.com/ggml-org/whisper.cpp)
 
 Installation
 -------------
@@ -39,31 +39,32 @@ Installation
 # ${ROBOT_CODE} is the root directory of your choice.
 # ~/my_whispercpp_installation_dir is a directory of your choice (where the whispercpp library will be installed)
 
- cd ${ROBOT_CODE}
- git clone https://github.com/ggml-org/whisper.cpp -b v1.7.5 whispercpp 
+ cd /path-to-your-source-folder/
+ git clone https://github.com/ggml-org/whisper.cpp -b v1.8.4 whispercpp
  cd whispercpp
  mkdir build
  cd build
- cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=~/my_whispercpp_installation_dir ..
+ cmake -GNinja -DGGML_CUDA=ON -DCMAKE_INSTALL_PREFIX=~/my_whispercpp_installation_dir ..
  cmake --build .
  cmake --install .
 ~~~
 
 ### Step 2: Build the yarp device
 ~~~bash
- cd ${ROBOT_CODE}
+ cd /path-to-your-source-folder/
  git clone https://github.com/robotology/yarp-device-speechTranscription-whisper
  cd yarp-device-speechTranscription-whisper
  mkdir build
  cd build
- cmake -GNinja -DWHISPER_ROOT=~/my_whispercpp_installation_dir ..
+ cmake -GNinja -Dwhisper_DIR=~/my_whispercpp_installation_dir ..
  cmake --build .
 ~~~
 
 ### Step 3: Install the model(s)
 ~~~bash
 # Here is a list (not complete) of possible whisper models: tiny.en, tiny, base.en, base, small.en, small, medium.en, medium, large-v1, large
-  wget -P ${ROBOT_CODE}/yarp-device-speechTranscription-whisper/build/share/WhisperTranscribe/contexts/whisperTranscribe_demo/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+  cd /path-to-whisper.cpp-code/models
+  ./download-ggml-model.sh base /path-to-device/yarp-device-speechTranscription-whisper/build/share/WhisperTranscribe/contexts/whisperTranscribe_demo/ggml-base.en.bin
 ~~~
 
 Usage
