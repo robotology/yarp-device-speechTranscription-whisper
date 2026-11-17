@@ -10,12 +10,13 @@
 #include <yarp/dev/ISpeechTranscription.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ResourceFinder.h>
-#include <stdio.h>
+
+#include <mutex>
+#include <string>
+#include <vector>
 
 #include "whisper.h"
 #include "WhisperSpeechTranscription_ParamsParser.h"
-
-using namespace yarp::os;
 
 /**
  * @ingroup dev_impl_other
@@ -31,16 +32,16 @@ class WhisperSpeechTranscription :
         public WhisperSpeechTranscription_ParamsParser
 {
 private:
-    bool                            m_verbose = true;
-    bool                            m_no_symbols = true;
-    std::string                     m_language="auto";
-    std::string                     m_model;
-    std::vector<float>              m_pcmf32;               // mono-channel F32 PCM
-    std::vector<std::vector<float>> m_pcmf32s;              // stereo-channel F32 PCM
-    struct whisper_context*         m_ctx= nullptr;
+    // whisper_full_params only stores raw `const char*` pointers: the strings
+    // they point to must outlive every whisper_full() call, so they are kept here.
+    std::string                     m_initial_prompt;
+    std::vector<float>              m_pcmf32;               // mono-channel F32 PCM at WHISPER_SAMPLE_RATE
+    struct whisper_context*         m_ctx = nullptr;
     whisper_full_params             m_wparams;
+    int32_t                         m_n_processors = 1;
+    std::mutex                      m_mutex;
 
-    int32_t                         n_processors = 1;
+    bool isLanguageSupported(const std::string& language) const;
 
 public:
     WhisperSpeechTranscription();

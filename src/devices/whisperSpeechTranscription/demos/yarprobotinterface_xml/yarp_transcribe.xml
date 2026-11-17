@@ -10,7 +10,8 @@
 <robot name="test" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
     <devices>
         <device name="dev1" type="whisperSpeechTranscription" >
-            <param extern-name="model" name="model"> ggml-base.en.bin </param>
+            <param name="model_context"> whisperTranscribe_demo </param>
+            <param extern-name="model" name="model_name"> ggml-base.en.bin </param>
         </device>
 
         <device name="dev2" type="speechTranscription_nws_yarp">

@@ -51,7 +51,7 @@ TEST_CASE("dev::whisperSpeechTranscription", "[yarp::dev]")
         {
             Property pdev_cfg;
             pdev_cfg.put("device", "whisperSpeechTranscription");
-            pdev_cfg.put("model", ss2.c_str());
+            pdev_cfg.put("model_name", ss2.c_str());
             REQUIRE(ddfake.open(pdev_cfg));
             REQUIRE(ddfake.view(istr));
         }
